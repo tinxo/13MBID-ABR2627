@@ -1,4 +1,5 @@
 [core]
     remote = dagshub
+    autostage = true
 ['remote "dagshub"']
     url = https://dagshub.com/tinxo/13MBID-ABR2627.dvc
