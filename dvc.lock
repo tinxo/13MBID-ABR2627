@@ -53,3 +53,23 @@ stages:
       hash: md5
       md5: 15299abc41dbb861c4eb721f45428c13
       size: 42698
+  data_prep:
+    cmd: python src/data_prep.py
+    deps:
+    - path: data/raw/datos_clientes.csv
+      hash: md5
+      md5: b46a5adb5c13bc3007ad2dfe45e58430
+      size: 438782
+    - path: data/raw/datos_resenas.csv
+      hash: md5
+      md5: e3ec9eeddaab38eea998b348bcd17d94
+      size: 4465568
+    - path: src/data_prep.py
+      hash: md5
+      md5: c900e5059b6b1220eb6990c90d80cb08
+      size: 4923
+    outs:
+    - path: data/processed/datos_integrados.csv
+      hash: md5
+      md5: c88efcfce695f99eb837a3516b5a0f50
+      size: 5182650
