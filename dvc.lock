@@ -32,3 +32,24 @@ stages:
       hash: md5
       md5: 7b38229f436ad9245c29e6b9fbe37d43
       size: 44496
+  test_data_quality:
+    cmd: pytest --html=docs/reporte_calidad_datos.html --self-contained-html 
+      test/test_data_quality.py -v || true
+    deps:
+    - path: data/raw/datos_clientes.csv
+      hash: md5
+      md5: b46a5adb5c13bc3007ad2dfe45e58430
+      size: 438782
+    - path: data/raw/datos_resenas.csv
+      hash: md5
+      md5: e3ec9eeddaab38eea998b348bcd17d94
+      size: 4465568
+    - path: test/test_data_quality.py
+      hash: md5
+      md5: 0bae6d35405c6a194099f7249eaa11fe
+      size: 5382
+    outs:
+    - path: docs/reporte_calidad_datos.html
+      hash: md5
+      md5: 15299abc41dbb861c4eb721f45428c13
+      size: 42698
