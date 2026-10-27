@@ -82,8 +82,8 @@ stages:
       size: 4601856
     - path: src/train_model.py
       hash: md5
-      md5: 4cc9aea4ca6bdd0514a7e88c1626ec55
-      size: 8870
+      md5: 03df38e584b1e3c9fe7d90bf9606c1ae
+      size: 9647
     outs:
     - path: docs/figures/confusion_matrix_test.png
       hash: md5

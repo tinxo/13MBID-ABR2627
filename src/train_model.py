@@ -29,6 +29,9 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
 
+REGISTERED_MODEL_NAME = "sentimiento-resenas"
+ALIAS_PRODUCCION = "champion"
+UMBRAL_ACCURACY = 0.8
 
 def load_data(data_path: str = "data/processed/datos_integrados.csv"):
     """
@@ -103,6 +106,7 @@ def train_model(
     preprocessor_output_path: str = "models/preprocessor.pkl",
     metrics_output_path: str = "metrics/train_metrics.json",
     figures_output_path: str = "docs/figures",
+    registered_model_name: str | None = REGISTERED_MODEL_NAME,
 ):
     """
     Entrena un modelo de clasificación utilizando los datos procesados y guarda el modelo, el preprocesador y las métricas.
@@ -192,12 +196,23 @@ def train_model(
 
         mlflow.log_metrics(metrics)
         mlflow.log_artifact(cm_fig_path, artifact_path="figures")
-        mlflow.sklearn.log_model(
-            pipeline, name="model", signature=signature, input_example=X_train.head(3)
+        model_info = mlflow.sklearn.log_model(
+            pipeline, name="model", signature=signature, input_example=X_train.head(3),
+            registered_model_name=registered_model_name,
         )
 
         run_id = mlflow.active_run().info.run_id
         print(f"Modelo registrado en MLFlow a raíz del run ID: {run_id}")
+
+    if registered_model_name:
+        version = model_info.registered_model_version
+        if metrics["test_accuracy"] >= UMBRAL_ACCURACY:
+            mlflow.MlflowClient().set_registered_model_alias(
+                name=registered_model_name, version=version, alias=ALIAS_PRODUCCION
+            )
+            print(f"Modelo registrado como '{registered_model_name}' con alias '{ALIAS_PRODUCCION}'")
+        else:
+            print(f"Modelo no cumple con el umbral de accuracy ({UMBRAL_ACCURACY}). No se registra como '{ALIAS_PRODUCCION}'.")
 
     Path(model_output_path).parent.mkdir(parents=True, exist_ok=True)
     Path(preprocessor_output_path).parent.mkdir(parents=True, exist_ok=True)
