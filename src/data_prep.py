@@ -2,6 +2,28 @@ import pandas as pd
 from pathlib import Path
 
 
+def create_attributes(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Crea atributos adicionales en el DataFrame de entrada.
+
+    Args:
+        df (pd.DataFrame): DataFrame de entrada con los datos originales.
+
+    Returns:
+        pd.DataFrame: DataFrame con los atributos adicionales.
+    """
+    ####################################################################
+    # Creación de atributos nuevos
+    #################################################################### 
+    # Longitud del texto de la reseña, en caracteres
+    df["longitud_resena"] = df["texto_resena"].str.len()
+    # Cantidad de palabras del texto de la reseña
+    df["cantidad_palabras_resena"] = df["texto_resena"].str.split().apply(len)
+    # Tiempo de respuesta expresado en días, más interpretable que en horas
+    df["tiempo_respuesta_dias"] = df["tiempo_respuesta_horas"] / 24
+    return df
+
+
 def process_data(
     datos_clientes: str = "data/raw/datos_clientes.csv",
     datos_resenas: str = "data/raw/datos_resenas.csv",
@@ -34,7 +56,7 @@ def process_data(
     # Agregar si corresponde otras acciones en función de la evaluación
     # de calidad de los datos del paso previo.
     ####################################################################
-    df_clientes_filtrado = df_clientes[(df_clientes['edad'] < 90) | (df_clientes['edad'].isna())]
+    df_clientes_filtrado = df_clientes[(df_clientes['edad'] < 90) | (df_clientes['edad'].isna())].copy()
     df_resenas_filtrado = df_resenas.drop_duplicates().copy()
 
     ####################################################################
@@ -55,15 +77,7 @@ def process_data(
         how='inner'
     )
 
-    ####################################################################
-    # Creación de atributos nuevos
-    #################################################################### 
-    # Longitud del texto de la reseña, en caracteres
-    df_integrado["longitud_resena"] = df_integrado["texto_resena"].str.len()
-    # Cantidad de palabras del texto de la reseña
-    df_integrado["cantidad_palabras_resena"] = df_integrado["texto_resena"].str.split().apply(len)
-    # Tiempo de respuesta expresado en días, más interpretable que en horas
-    df_integrado["tiempo_respuesta_dias"] = df_integrado["tiempo_respuesta_horas"] / 24
+    
 
     ####################################################################
     # Formateo de los datos
