@@ -63,16 +63,15 @@ def cargar_modelo():
         import mlflow.sklearn
         try:
             modelo["pipeline"] = mlflow.sklearn.load_model(MODEL_URI)
-            modelo["origen"] = "MODEL_URI"
+            modelo["origen"] = MODEL_URI
         except Exception as e:
             print(f"Error al cargar el modelo desde {MODEL_URI}: {e}")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Cargar el modelo entrenado y el preprocesador al iniciar la aplicación
-    if os.path.exists(MODEL_PATH):
-        modelo["pipeline"] = joblib.load(MODEL_PATH)
+    # Cargar el modelo entrenado al iniciar la aplicación (archivo local o registro de MLflow)
+    cargar_modelo()
     yield
     modelo.clear()
 
